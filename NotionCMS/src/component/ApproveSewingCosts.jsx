@@ -75,11 +75,11 @@ function ApproveSewingCosts() {
 
     return (
         <>
-            <Navigation/>
+            <Navigation />
             <button onClick={handlePrint} className='text-4xl fixed right-30 bottom-10 text-blue-400 hover:text-blue-500 print:hidden'><FaPrint /></button>
             <section style={{ fontFamily: 'IBM Plex Sans Thai, serif' }} className='container max-w-full'>
-                <div className='mx-auto rouded-lg w-[210mm] h-[297mm] px-6 border'>
-                    <div ref={printRef} className='flex flex-col justify-between relative'>
+                <div ref={printRef} className='mx-auto rouded-lg w-[210mm] h-[297mm] px-6 border flex flex-col justify-between'>
+                    <div>
                         <div className='flex justify-center'>
                             <div className='grid content-center mt-10'>
                                 <h3 className='font-bold text-4xl'>ใบขออนุมัติจ่ายค่าจ้างตัดเย็บสินค้าช่างนอก</h3>
@@ -118,15 +118,15 @@ function ApproveSewingCosts() {
                                 </tbody>
                             </table>
                         </div>
-                        <div className='grid grid-cols-2 text-center mt-15'>
-                            <div>
-                                <p>ผู้ทบทวน : ................................</p>
-                                <p className='relative'>วันที่ : ....<span className='absolute -top-1'>{data[0].date}</span>............................</p>
-                            </div>
-                            <div>
-                                <p>ผู้อนุมัติ : ................................</p>
-                                <p className='relative'>วันที่ : ....<span className='absolute -top-1'>{data[0].date}</span>............................</p>
-                            </div>
+                    </div>
+                    <div className='grid grid-cols-2 text-center mb-20'>
+                        <div>
+                            <p>ผู้ทบทวน : ................................</p>
+                            <p className='relative'>วันที่ : ....<span className='absolute -top-1'>{data[0].date}</span>............................</p>
+                        </div>
+                        <div>
+                            <p>ผู้อนุมัติ : ................................</p>
+                            <p className='relative'>วันที่ : ....<span className='absolute -top-1'>{data[0].date}</span>............................</p>
                         </div>
                     </div>
                 </div>

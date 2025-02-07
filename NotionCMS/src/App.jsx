@@ -9,11 +9,15 @@ import ApproveSewingCosts from './component/ApproveSewingCosts';
 import ExpProd from './pages/ExpProd';
 import ExpAcc from './pages/ExpAcc';
 import ExpDetail from './pages/ExpDetail';
+import ScrollToTop from './component/ScrollToTop';
+import ScrollToTopBtn from './component/ScrollToTopBtn';
 
 function App() {
 
   return (
     <>
+      <ScrollToTop/>
+      <ScrollToTopBtn/>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/quotations' element={<Quotations />} />
