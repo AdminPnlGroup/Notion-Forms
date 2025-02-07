@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+
+body {
+  .ibm-plex-sans-thai-regular {
+    font-family: "IBM Plex Sans Thai", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+}
+
+.colorGreen {
+  background: #f4f7f6;
+}
+
+.custom-border {
+  border: 1px solid #d1d5db;
+}
+
+@media print {
+  @page {
+    margin: 0; 
+    size: A4; 
+  }
+
+  html, body {
+    overflow: hidden;
+  }
+
+  .break-after-page {
+    break-after: page;
+    page-break-after: always; 
+  }
+}
