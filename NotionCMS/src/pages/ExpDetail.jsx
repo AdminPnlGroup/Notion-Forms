@@ -31,7 +31,7 @@ function ExpDetail() {
             <Navigation />
             <button onClick={handlePrint} className='text-4xl fixed right-20 bottom-10 text-blue-400 hover:text-blue-500 print:hidden'><FaPrint /></button>
             <section style={{ fontFamily: 'IBM Plex Sans Thai, serif' }} className='container max-w-full'>
-                {data.map((item, index) => (
+                {data?.filter(item => item?.properties?.Checkbox?.checkbox !== true).map((item, index) => (
                     <div key={index} ref={printRef} className='mx-auto px-8 w-[210mm] h-[297mm] border mb-2'>
                         <ExpenseRequest {...item} title="ใบขอเบิกค่าใช้จ่าย (ดีเทล)"/>
                     </div>
