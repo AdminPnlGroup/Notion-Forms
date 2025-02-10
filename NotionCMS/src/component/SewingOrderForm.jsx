@@ -117,7 +117,7 @@ function SewingOrderForm({ properties }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {[...Array(5)].map((_, index) => (
+                        {[...Array(4)].map((_, index) => (
                             <tr key={index}>
                                 <td className="border px-4 py-2 text-center">&nbsp;</td>
                                 <td className="border px-4 py-2">&nbsp;</td>

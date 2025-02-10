@@ -26,7 +26,7 @@ function ScrollToTopBtn() {
   return (
     <div>
         {scrollToTopBtn && (
-            <button onClick={scrollUp} className='fixed bottom-9 right-6 p-2 bg-white z-30 transition duration-300 ease-in-out text-gray-700 hover:text-blue-700 text-3xl'><FaArrowAltCircleUp /></button>
+            <button onClick={scrollUp} className='fixed bottom-9 right-6 p-2 bg-white z-30 transition duration-300 ease-in-out text-blue-400 hover:text-blue-500 text-3xl'><FaArrowAltCircleUp /></button>
         )}
     </div>
   )
