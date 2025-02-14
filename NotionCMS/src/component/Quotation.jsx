@@ -27,12 +27,22 @@ function Quotation({ properties }) {
       <div className='grid grid-cols-2 gap-5 mt-10'>
         <div className='text-center'>
           <div className='mx-auto w-80 h-80 flex justify-center'>
-            <img className='' src={properties?.["Clothing Styles And Fabric Pattern"]?.files[0]?.file?.url} alt={properties?.["Clothing Styles And Fabric Pattern"]?.files[0]?.name} />
+            <img className='' src={properties?.["Clothing Styles And Fabric Pattern"]?.files[0]?.external?.url} alt={properties?.["Clothing Styles And Fabric Pattern"]?.files[0]?.name} />
           </div>
         </div>
         <div className='grid gap-5'>
           <div className='grid content-center'>
-            <p className='border p-2'>วันที่ : <span className='font-medium'>ㅤ{properties?.Date?.date?.start}</span></p>
+            <p className='border p-2'>วันที่ :
+              <span className='font-medium'>ㅤ
+                {new Intl.DateTimeFormat('th-TH',
+                  {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  }
+                ).format(new Date(properties?.Date?.date?.start))}
+              </span>
+            </p>
           </div>
           <div className='grid content-center'>
             <p className='border p-2'>เลขที่ล๊อต : <span className='font-medium'>ㅤ{properties?.["เลขที่ล็อต"]?.rich_text[0]?.plain_text}</span></p>
@@ -88,13 +98,35 @@ function Quotation({ properties }) {
         </div>
       </div>
       <div className='grid grid-cols-2 text-center mt-20'>
-        <div>
-          <p>ผู้ทบทวน : ................................</p>
-          <p>วันที่ : <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ{properties.Date.date.start}ㅤ</span></p>
+        <div className='grid gap-2'>
+          <p className='relative'>ผู้ทบทวน : ............................................<img className='absolute -top-12 h-24 left-32' src={properties?.["ผู้ทบทวน"]?.files[0]?.external?.url} alt={properties?.["ผู้ทบทวน"]?.files[0].name} /></p>
+          <p>( {properties?.["ชื่อผู้ทบทวน"]?.rich_text[0]?.text?.content} )</p>
+          <p>วันที่ :
+            <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ
+              {new Intl.DateTimeFormat('th-TH',
+                {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                }
+              ).format(new Date(properties?.Date?.date?.start))}ㅤ
+            </span>
+          </p>
         </div>
-        <div>
-          <p>ผู้อนุมัติ : ................................</p>
-          <p>วันที่ : <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ{properties.Date.date.start}ㅤ</span></p>
+        <div className='grid gap-2'>
+          <p className='relative'>ผู้อนุมัติ : ............................................<img className='absolute -top-12 h-24 left-32' src={properties?.["ผู้อนุมัติ"]?.files[0]?.external?.url} alt={properties?.["ผู้อนุมัติ"]?.files[0].name} /></p>
+          <p>( {properties?.["ชื่อผู้อนุมัติ"]?.rich_text[0]?.text?.content} )</p>
+          <p>วันที่ :
+            <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ
+              {new Intl.DateTimeFormat('th-TH',
+                {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                }
+              ).format(new Date(properties?.Date?.date?.start))}ㅤ
+            </span>
+          </p>
         </div>
       </div>
     </>
@@ -102,4 +134,3 @@ function Quotation({ properties }) {
 }
 
 export default Quotation
-

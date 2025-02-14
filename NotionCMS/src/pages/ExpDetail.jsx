@@ -8,7 +8,7 @@ function ExpDetail() {
     const [data, setData] = useState([]);
     async function fetchDataFromAPIEndpoint() {
         try {
-            const response = await fetch('http://localhost:4000/notion-exp-prod');
+            const response = await fetch('http://localhost:4000/notion-exp-detail');
             const result = await response.json();
             setData(result.results);
         } catch (error) {

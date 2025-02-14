@@ -29,7 +29,7 @@ function SewingOrderForm({ properties }) {
             <div className='mt-4'>
                 <div className="flex gap-2 text-md justify-center mb-2">
                     <div>วันที่ :<span className='underline underline-offset-4 font-medium'>ㅤ{properties?.Date?.date?.start}ㅤ</span></div>
-                    <div>ชื่อ/บริษัท : <span className='underline underline-offset-4 font-medium'>ㅤ{properties?.["ชื่อ/บริษัท"]?.rich_text?.[0]?.text?.content}ㅤ</span></div>
+                    <div>ชื่อ/บริษัท : <span className='underline underline-offset-4 font-medium'>ㅤ{properties?.["ชื่อ/บริษัท"]?.title?.[0]?.text?.content}ㅤ</span></div>
                     <div className='flex gap-2'>ชนิดงาน :
                         <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "กางเกง" ? true : false} onChange={handleChangeTypeOfWork} /> กางเกง
                         <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "ปัก" ? true : false} onChange={handleChangeTypeOfWork} /> ปัก

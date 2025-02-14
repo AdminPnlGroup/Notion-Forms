@@ -57,6 +57,24 @@ app.get('/notion-exp-prod', async (req, res) => {
     }
 });
 
+app.get('/notion-exp-acc', async (req, res) => {
+    try {
+        const data = await fetchNotionDatabase(NOTION_EXP_ACC);
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/notion-exp-detail', async (req, res) => {
+    try {
+        const data = await fetchNotionDatabase(NOTION_EXP_DETAIL);
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(PORT, HOST, () => {
     console.log(`Server is running on http://${HOST}:${PORT}`);
 });
