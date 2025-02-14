@@ -158,31 +158,35 @@ function ExpenseRequest({ properties, title }) {
       <div className='flex justify-between px-5 mb-20'>
         <div className='text-center grid gap-2'>
           <p className='relative'>ผู้ขอเบิก : ............................................<img className='absolute -top-12 h-24 left-18' src={properties?.["ผู้ขอเบิก"]?.files[0]?.external?.url} alt={properties?.["ผู้ขอเบิก"]?.files[0]?.name} /></p>
-          <p>( {properties?.["ชื่อผู้ขอเบิก"]?.rich_text[0]?.text?.content} )</p>
+          <p>( {properties?.["ชื่อผู้ขอเบิก"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)} )</p>
           <p>วันที่ :
-            <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ
-              {new Intl.DateTimeFormat('th-TH',
-                {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                }
-              ).format(new Date(properties?.Date?.date?.start))}ㅤ
+            <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">
+              ㅤ
+              {properties?.["วันที่เซ็นผู้ขอเบิก"]?.date?.start
+                ? new Intl.DateTimeFormat("th-TH", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }).format(new Date(properties["วันที่เซ็นผู้ขอเบิก"]?.date?.start))
+                : "\u00A0".repeat(25)}
+              ㅤ
             </span>
           </p>
         </div>
         <div className='text-center grid gap-2'>
           <p className='relative'>ผู้อนุมัติ : ............................................<img className='absolute -top-12 h-24 left-18' src={properties?.["ผู้อนุมัติ"]?.files[0]?.external?.url} alt={properties?.["ผู้อนุมัติ"]?.files[0]?.name} /></p>
-          <p>( {properties?.["ชื่อผู้อนุมัติ"]?.rich_text[0]?.text?.content} )</p>
+          <p>( {properties?.["ชื่อผู้อนุมัติ"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)} )</p>
           <p>วันที่ :
-            <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ
-              {new Intl.DateTimeFormat('th-TH',
-                {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                }
-              ).format(new Date(properties?.Date?.date?.start))}ㅤ
+            <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">
+              ㅤ
+              {properties?.["วันที่เซ็นผู้อนุมัติ"]?.date?.start
+                ? new Intl.DateTimeFormat("th-TH", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }).format(new Date(properties["วันที่เซ็นผู้อนุมัติ"]?.date?.start))
+                : "\u00A0".repeat(25)}
+              ㅤ
             </span>
           </p>
         </div>

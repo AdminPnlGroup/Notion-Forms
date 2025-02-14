@@ -26,7 +26,6 @@ function Navigation() {
             <ul className="flex gap-5 text-xl [&>li:not(child)]:content-center">
               <LinkComponent to="/"></LinkComponent>
               <LinkComponent to="/quotations">ใบเสนอราคา</LinkComponent>
-              <LinkComponent to="/approvesewingcosts">ใบขออนุมัติจ่ายค่าจ้างตัดเย็บ</LinkComponent>
               <div className="relative expense-dropdown">
                 <button
                   onClick={(e) => {
@@ -43,6 +42,7 @@ function Navigation() {
                 </div>
               </div>
               <LinkComponent to="/sewingorderforms">ใบจ่ายงานค่าตัดเย็บ</LinkComponent>
+              <LinkComponent to="/approvesewingcosts">ใบขออนุมัติจ่ายค่าจ้างตัดเย็บ</LinkComponent>
             </ul>
           </div>
         </div>
