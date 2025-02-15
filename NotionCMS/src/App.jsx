@@ -20,12 +20,12 @@ function App() {
       <ScrollToTopBtn/>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/quotations' element={<Quotations />} />
-        <Route path='/approvesewingcosts' element={<ApproveSewingCosts />} />
-        <Route path='/expprod' element={<ExpProd />} />
-        <Route path='/expacc' element={<ExpAcc />} />
-        <Route path='/expdetail' element={<ExpDetail />} />
-        <Route path='/sewingorderforms' element={<SewingOrderForms />} />
+        <Route path='/pnl/quotations' element={<Quotations />} />
+        <Route path='/pnl/approvesewingcosts' element={<ApproveSewingCosts />} />
+        <Route path='/pnl/expprod' element={<ExpProd />} />
+        <Route path='/pnl/expacc' element={<ExpAcc />} />
+        <Route path='/pnl/expdetail' element={<ExpDetail />} />
+        <Route path='/pnl/sewingorderforms' element={<SewingOrderForms />} />
       </Routes>
     </>
   )

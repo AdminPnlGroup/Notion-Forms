@@ -25,7 +25,7 @@ function Navigation() {
           <div className="flex justify-center">
             <ul className="flex gap-5 text-xl [&>li:not(child)]:content-center">
               <LinkComponent to="/"></LinkComponent>
-              <LinkComponent to="/quotations">ใบเสนอราคา</LinkComponent>
+              <LinkComponent to="/pnl/quotations">ใบเสนอราคา</LinkComponent>
               <div className="relative expense-dropdown">
                 <button
                   onClick={(e) => {
@@ -36,13 +36,13 @@ function Navigation() {
                 </button>
                 <div
                   className={`absolute left-0 mt-2 bg-white shadow-lg transition-all duration-400 top-14 ${isExpenseHovered ? "opacity-100 visible scale-100" : "opacity-0 invisible scale-95"}`}>
-                  <LinkComponent to="/expprod" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (ผลิต)</LinkComponent>
-                  <LinkComponent to="/expacc" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (บัญชี)</LinkComponent>
-                  <LinkComponent to="/expdetail" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (ดีเทล)</LinkComponent>
+                  <LinkComponent to="/pnl/expprod" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (ผลิต)</LinkComponent>
+                  <LinkComponent to="/pnl/expacc" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (บัญชี)</LinkComponent>
+                  <LinkComponent to="/pnl/expdetail" className="block px-4 py-2 hover:bg-gray-100">ใบขอเบิกค่าใช้จ่าย (ดีเทล)</LinkComponent>
                 </div>
               </div>
-              <LinkComponent to="/sewingorderforms">ใบจ่ายงานค่าตัดเย็บ</LinkComponent>
-              <LinkComponent to="/approvesewingcosts">ใบขออนุมัติจ่ายค่าจ้างตัดเย็บ</LinkComponent>
+              <LinkComponent to="/pnl/sewingorderforms">ใบจ่ายงานค่าตัดเย็บ</LinkComponent>
+              <LinkComponent to="/pnl/approvesewingcosts">ใบขออนุมัติจ่ายค่าจ้างตัดเย็บ</LinkComponent>
             </ul>
           </div>
         </div>

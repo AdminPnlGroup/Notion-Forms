@@ -97,7 +97,7 @@ function SewingOrderForm({ properties }) {
                                         <img
                                             key={index}
                                             className="w-56 h-34 object-contain"
-                                            src={file.file?.url}
+                                            src={file.external?.url ?? file.file?.url}
                                             alt={file.name}
                                         />
                                     ))
@@ -168,7 +168,7 @@ function SewingOrderForm({ properties }) {
                         <div>รายละเอียดราคา : <span className='underline font-medium underline-offset-4'>ㅤㅤㅤ{properties?.["รายละเอียดราคา"]?.rich_text[0]?.text?.content}ㅤㅤㅤ</span></div>
                         <div className="mt-2 flex gap-2">
                             <div>การชำระเงิน: ราคา/ตัว <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["การชำระเงิน(ราคา/ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
-                            <div>ตัว รวมจำนวน <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["การชำระเงิน(รวมจำนวน)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
+                            <div>ตัว รวมจำนวน <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["รวมจำนวน(ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
                             <div>ตัว ยอดเงินรวม <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["ยอดเงินรวม"]?.rich_text[0]?.text?.content}ㅤ</span></div>
                         </div>
                         <div className="mt-2 flex gap-2">
