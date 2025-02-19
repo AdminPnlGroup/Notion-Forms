@@ -33,7 +33,7 @@ function ExpAcc() {
             <section style={{ fontFamily: 'IBM Plex Sans Thai, serif' }} className='container max-w-full'>
                 {data?.filter(item => item?.properties?.Checkbox?.checkbox !== true).map((item, index) => (
                     <div key={index} ref={printRef} className='mx-auto px-8 w-[210mm] h-[297mm] border mb-2 flex justify-between flex-col'>
-                        <ExpenseRequest {...item} title="ใบขอเบิกค่าใช้จ่าย (บัญชี)"/>
+                        <ExpenseRequest {...item} title="ใบขอเบิกค่าใช้จ่าย (บัญชี)" />
                     </div>
                 ))}
             </section>

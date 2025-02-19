@@ -34,7 +34,7 @@ function SewingOrderForms() {
             <section style={{ fontFamily: 'IBM Plex Sans Thai, serif' }} className='container max-w-full'>
                 {data?.filter(item => item?.properties?.Checkbox?.checkbox !== true)
                     .map((item, index) => (
-                        <div key={index} ref={printRef} className='mx-auto rouded-lg w-[210mm] h-[297mm] overflow-x-auto px-6 break-after-page border mb-2'>
+                        <div key={index} ref={printRef} className='mx-auto rouded-lg w-[210mm] h-[297mm] overflow-x-auto px-6 break-after-page border mb-2 flex justify-between flex-col'>
                             <SewingOrderForm {...item} />
                         </div>
                     ))

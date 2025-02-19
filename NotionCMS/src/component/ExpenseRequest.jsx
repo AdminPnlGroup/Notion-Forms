@@ -1,111 +1,87 @@
 import React, { useState, useEffect } from 'react'
 import toThaiBahtText from "thai-baht-text";
+import Signature from './Signature';
 
 function ExpenseRequest({ properties, title }) {
 
-  const [listContent, setListContent] = useState("");
-  const [list, setList] = useState();
-  const [unitPriceContent, setUnitPriceContent] = useState("");
-  const [unitPrice, setUnitPrice] = useState();
-  const [quantityContent, setQuantityContent] = useState("");
-  const [quantity, setQuantity] = useState();
-  const [expenses, setExpenses] = useState([]);
+  const [contents, setContents] = useState({
+    list: "",
+    unitPrice: "",
+    quantity: ""
+  });
+
+  const [data, setData] = useState([]);
   const [sumTotal, setSumTotal] = useState(0);
   const [thaiNumber, setThaiNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    setListContent(properties?.["รายการ"]?.rich_text[0]?.text?.content);
-    setUnitPriceContent(properties?.["ราคา/หน่วย"]?.rich_text[0]?.text?.content);
-    setQuantityContent(properties?.["จำนวน"]?.rich_text[0]?.text?.content);
-  }, [properties])
+    if (!properties) return;
 
-  function splitContentToArray(content) {
-    if (!content) return [];
-    return content.split(",").map(item => item.trim()).filter(item => item !== "");
-  }
+    setContents({
+      list: properties?.["รายการ"]?.rich_text?.[0]?.text?.content || "",
+      unitPrice: properties?.["ราคา/หน่วย"]?.rich_text?.[0]?.text?.content || "",
+      quantity: properties?.["จำนวน"]?.rich_text?.[0]?.text?.content || ""
+    });
+  }, [properties]);
 
-  splitContentToArray(listContent, unitPriceContent, quantityContent);
-
-  function splitAndConvertToNumber(content) {
+  function splitContent(content, toNumber = false) {
     if (!content) return [];
     return content
-      .split(",")
-      .map(item => parseFloat(item.trim()))
-      .filter(item => !isNaN(item));
+      .split("\n")
+      .map(item => toNumber ? parseFloat(item.trim()) : item.trim())
+      .filter(item => toNumber ? !isNaN(item) : item);
   }
 
-  splitAndConvertToNumber(unitPriceContent, quantityContent);
-
   useEffect(() => {
-    const listResult = splitContentToArray(listContent) ?? [];
-    const unitPriceResult = splitAndConvertToNumber(unitPriceContent) ?? [];
-    const quantityResult = splitAndConvertToNumber(quantityContent) ?? [];
+    const keys = Object.keys(contents);
+    const results = keys.reduce((acc, key) => {
+      acc[key] = splitContent(contents[key], key !== "list");
+      return acc;
+    }, {});
 
-    const maxLength = Math.max(listResult.length, unitPriceResult.length, quantityResult.length);
+    const maxLength = Math.max(...keys.map(key => results[key].length));
 
     if (maxLength === 0) {
       setErrorMessage("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      setList([]);
-      setUnitPrice([]);
-      setQuantity([]);
+      setData([]);
       return;
     }
 
-    if (listResult.length !== maxLength || unitPriceResult.length !== maxLength || quantityResult.length !== maxLength) {
+    const isValid = keys.every(key => results[key].length === maxLength);
+    if (!isValid) {
       setErrorMessage("ข้อมูลบางส่วนไม่ครบหรือจำนวนไม่ตรงกัน");
-      setList([]);
-      setUnitPrice([]);
-      setQuantity([]);
+      setData([]);
       return;
     }
 
-    setErrorMessage(""); // เคลียร์ข้อความ error ถ้าข้อมูลถูกต้อง
+    setErrorMessage("");
+    setData(Array.from({ length: maxLength }, (_, i) => ({
+      id: i + 1,
+      item: results.list[i] || "ไม่มีข้อมูล",
+      quantity: results.quantity[i] || 0,
+      price: results.unitPrice[i] || 0,
+      total: (results.quantity[i] || 0) * (results.unitPrice[i] || 0)
+    })));
 
-    const normalizedList = Array.from({ length: maxLength }, (_, i) => listResult[i] ?? "ไม่มีข้อมูล");
-    const normalizedUnitPrice = Array.from({ length: maxLength }, (_, i) => unitPriceResult[i] ?? 0);
-    const normalizedQuantity = Array.from({ length: maxLength }, (_, i) => quantityResult[i] ?? 0);
-
-    setList(normalizedList);
-    setUnitPrice(normalizedUnitPrice);
-    setQuantity(normalizedQuantity);
-
-  }, [listContent, unitPriceContent, quantityContent]);
+  }, [contents]);
 
   useEffect(() => {
     try {
-      if (!list?.length || !quantity?.length || !unitPrice?.length) {
-        setExpenses([]);
+      if (data.length === 0) {
         setSumTotal(0);
         setThaiNumber("");
         return;
       }
 
-      const combinedArray = list.map((item, index) => {
-        const qty = quantity[index] ?? 0;
-        const price = unitPrice[index] ?? 0;
-        const total = qty * price;
-
-        return {
-          id: index + 1,
-          item,
-          quantity: qty,
-          price: price,
-          total,
-        };
-      });
-
-      setExpenses(combinedArray);
-
-      const totalSum = combinedArray.reduce((sum, entry) => sum + entry.total, 0);
+      const totalSum = data.reduce((sum, entry) => sum + entry.total, 0);
       setSumTotal(totalSum);
-
       setThaiNumber(toThaiBahtText(totalSum));
 
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการคำนวณ", error);
     }
-  }, [list, quantity, unitPrice]);
+  }, [data]);
 
   return (
     <>
@@ -135,61 +111,47 @@ function ExpenseRequest({ properties, title }) {
             </tr>
           </thead>
           <tbody>
-            {expenses?.map((expense) => (
-              <tr key={expense.id} className="border custom-border">
-                <td className="border custom-border p-2 text-center">{expense?.id}</td>
-                <td className="border custom-border p-2">{expense?.item}</td>
-                <td className="border custom-border p-2 text-center">{expense?.quantity}</td>
-                <td className="border custom-border p-2 text-center">{expense?.price.toLocaleString()}</td>
-                <td className="border custom-border p-2 text-right">{expense?.total.toLocaleString()}</td>
-              </tr>
-            ))}
+            {Array.from({ length: Math.max(7, data?.length || 0) }).map((_, index) => {
+              const item = data?.[index]; // ดึงข้อมูลจาก data ตาม index
+              return (
+                <tr key={index} className="border custom-border">
+                  <td className="border custom-border p-2 text-center">{item ? item.id : "ㅤ"}</td>
+                  <td className="border custom-border p-2">{item?.item || ""}</td>
+                  <td className="border custom-border p-2 text-center">{item?.quantity || ""}</td>
+                  <td className="border custom-border p-2 text-center">
+                    {item?.price ? item.price.toLocaleString() : ""}
+                  </td>
+                  <td className="border custom-border p-2 text-right">
+                    {item?.total ? item.total.toLocaleString() : ""}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
         {errorMessage && <span className="text-red-500 text-md mt-10 block">{errorMessage}</span>}
         <div className="mt-14 text-right grid gap-2">
           <p className="text-lg font-bold">รวมทั้งสิ้น: {sumTotal.toLocaleString()} บาท</p>
-          <p className="text-lg">{thaiNumber}</p>
+          <p className="text-lg font-bold">{thaiNumber}</p>
         </div>
         <div className='mt-4 flex gap-2'>
-          หมายเหตุ : <p>{properties?.["หมายเหตุ"]?.rich_text[0]?.text?.content}</p>
+          <p className='font-bold'>หมายเหตุ : </p>
+          <p>{properties?.["หมายเหตุ"]?.rich_text[0]?.text?.content}</p>
         </div>
       </div>
-      <div className='flex justify-between px-5 mb-20'>
-        <div className='text-center grid gap-2'>
-          <p className='relative'>ผู้ขอเบิก : ............................................<img className='absolute -top-12 h-24 left-18' src={properties?.["ผู้ขอเบิก"]?.files[0]?.external?.url} alt={properties?.["ผู้ขอเบิก"]?.files[0]?.name} /></p>
-          <p>( {properties?.["ชื่อผู้ขอเบิก"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)} )</p>
-          <p>วันที่ :
-            <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">
-              ㅤ
-              {properties?.["วันที่เซ็นผู้ขอเบิก"]?.date?.start
-                ? new Intl.DateTimeFormat("th-TH", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }).format(new Date(properties["วันที่เซ็นผู้ขอเบิก"]?.date?.start))
-                : "\u00A0".repeat(25)}
-              ㅤ
-            </span>
-          </p>
-        </div>
-        <div className='text-center grid gap-2'>
-          <p className='relative'>ผู้อนุมัติ : ............................................<img className='absolute -top-12 h-24 left-18' src={properties?.["ผู้อนุมัติ"]?.files[0]?.external?.url} alt={properties?.["ผู้อนุมัติ"]?.files[0]?.name} /></p>
-          <p>( {properties?.["ชื่อผู้อนุมัติ"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)} )</p>
-          <p>วันที่ :
-            <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">
-              ㅤ
-              {properties?.["วันที่เซ็นผู้อนุมัติ"]?.date?.start
-                ? new Intl.DateTimeFormat("th-TH", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }).format(new Date(properties["วันที่เซ็นผู้อนุมัติ"]?.date?.start))
-                : "\u00A0".repeat(25)}
-              ㅤ
-            </span>
-          </p>
-        </div>
+      <div className='mb-20'>
+        <Signature
+          requesterTitle="ผู้ขอเบิก"
+          requesterId={properties?.["ผู้ขอเบิก"]?.files[0]?.external?.url || ""}
+          namerequesterId={properties?.["ชื่อผู้ขอเบิก"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
+          altrequesterId={properties?.["ผู้ขอเบิก"]?.files[0]?.name}
+          daterequesterId={properties?.["วันที่เซ็นผู้ขอเบิก"]?.date?.start}
+          approverTitle="ผู้อนุมัติ"
+          approverId={properties?.["ผู้อนุมัติ"]?.files[0]?.external?.url || ""}
+          nameapproverId={properties?.["ชื่อผู้อนุมัติ"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
+          altapproverId={properties?.["ผู้อนุมัติ"]?.files[0]?.name}
+          dateapproverId={properties?.["วันที่เซ็นผู้อนุมัติ"]?.date?.start}
+        />
       </div>
     </>
   )

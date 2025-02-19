@@ -5,7 +5,7 @@ import './App.css'
 import Home from "./pages/Home";
 import Quotations from './pages/Quotations';
 import SewingOrderForms from './pages/SewingOrderForms';
-import ApproveSewingCosts from './component/ApproveSewingCosts';
+import ApproveSewingCosts from './pages/ApproveSewingCosts';
 import ExpProd from './pages/ExpProd';
 import ExpAcc from './pages/ExpAcc';
 import ExpDetail from './pages/ExpDetail';

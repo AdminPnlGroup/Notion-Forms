@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Navigation from '../component/Navigation'
 import ExpenseRequest from '../component/ExpenseRequest'
 import { FaPrint } from "react-icons/fa6";
+import Signature from '../component/Signature';
 
 function ExpDetail() {
 
@@ -33,7 +34,7 @@ function ExpDetail() {
             <section style={{ fontFamily: 'IBM Plex Sans Thai, serif' }} className='container max-w-full'>
                 {data?.filter(item => item?.properties?.Checkbox?.checkbox !== true).map((item, index) => (
                     <div key={index} ref={printRef} className='mx-auto px-8 w-[210mm] h-[297mm] border mb-2 flex justify-between flex-col'>
-                        <ExpenseRequest {...item} title="ใบขอเบิกค่าใช้จ่าย (ดีเทล)"/>
+                        <ExpenseRequest {...item} title="ใบขอเบิกค่าใช้จ่าย (ดีเทล)" />
                     </div>
                 ))}
             </section>

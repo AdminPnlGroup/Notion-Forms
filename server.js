@@ -75,6 +75,15 @@ app.get('/notion-exp-detail', async (req, res) => {
     }
 });
 
+app.get('/notion-pay-tailor', async (req, res) => {
+    try {
+        const data = await fetchNotionDatabase(NOTION_PAY_TAILOR);
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(PORT, HOST, () => {
     console.log(`Server is running on http://${HOST}:${PORT}`);
 });
