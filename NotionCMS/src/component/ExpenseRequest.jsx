@@ -151,6 +151,7 @@ function ExpenseRequest({ properties, title }) {
           nameapproverId={properties?.["ชื่อผู้อนุมัติ"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
           altapproverId={properties?.["ผู้อนุมัติ"]?.files[0]?.name}
           dateapproverId={properties?.["วันที่เซ็นผู้อนุมัติ"]?.date?.start}
+          left={"left-18"}
         />
       </div>
     </>

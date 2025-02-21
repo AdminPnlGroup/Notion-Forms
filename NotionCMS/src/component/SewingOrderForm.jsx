@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Signature from './Signature';
 
 function SewingOrderForm({ properties }) {
@@ -6,23 +6,58 @@ function SewingOrderForm({ properties }) {
     const [isCheckedTypeOfWork, setIsCheckedTypeOfWork] = useState("");
     const [isCheckedType, setIsCheckedType] = useState("");
     const [files, setFiles] = useState([]);
+    const [tableInputs, setTableInputs] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
-    const handleChangeTypeOfWork = () => {
-        setIsCheckedTypeOfWork(isCheckedTypeOfWork)
-    };
-    const handleChangeType = () => {
-        setIsCheckedType(isCheckedType)
-    };
-
+    // ดึงข้อมูลจาก properties และตั้งค่า state
     useEffect(() => {
-        setIsCheckedTypeOfWork(properties?.["ชนิดงาน"]?.multi_select[0]?.name);
-        setIsCheckedType(properties?.["ประเภท"]?.multi_select[0]?.name);
+        setIsCheckedTypeOfWork(properties?.["ชนิดงาน"]?.multi_select[0]?.name || "");
+        setIsCheckedType(properties?.["ประเภท"]?.multi_select[0]?.name || "");
+
+        // หาข้อมูลที่เกี่ยวข้องกับรหัสสี
+        const newTableInputs = [];
+        for (let i = 1; i <= 5; i++) {
+            const colorKey = `รหัสสี${i > 1 ? ` (${i})` : ""}`;
+            const sizeKey = `ไซส์${i > 1 ? ` (${i})` : ""}`;
+            const quantityKey = `จำนวน(ไซต์)${i > 1 ? ` (${i})` : ""}`;
+
+            if (properties?.[colorKey]?.rich_text?.[0]?.plain_text) {
+                newTableInputs.push({
+                    colorCode: properties[colorKey].rich_text[0].plain_text || "",
+                    sizes: properties[sizeKey]?.rich_text?.[0]?.plain_text || "",
+                    sizeQuantities: properties[quantityKey]?.rich_text?.[0]?.plain_text || "",
+                });
+            }
+        }
+
+        setTableInputs(newTableInputs);
 
         if (properties?.["รูปแบบ(ตุ๊กตา)"]?.files) {
             setFiles(properties["รูปแบบ(ตุ๊กตา)"].files);
         }
+    }, [properties]);
 
-    }, [properties])
+    // คำนวณ tableData เมื่อ tableInputs เปลี่ยน
+    useEffect(() => {
+        setTableData(generateTableData());
+    }, [tableInputs]);
+
+    // ใช้ useMemo เพื่อลดการคำนวณ maxRows ที่ไม่จำเป็น
+    const maxRows = useMemo(() => Math.max(...tableData.map(data => data.sizes.length), 0), [tableData]);
+
+    const generateTableData = () => {
+        const parseSizes = (sizes, quantities) => {
+            const sizeArray = sizes.split("\n").map(Number).filter(n => !isNaN(n));
+            const quantityArray = quantities.split("\n").map(Number).filter(n => !isNaN(n));
+
+            return sizeArray.map((size, index) => [size, quantityArray[index] || 0]);
+        };
+
+        return tableInputs.map(input => ({
+            code: input.colorCode.trim(),
+            sizes: parseSizes(input.sizes, input.sizeQuantities),
+        }));
+    };
 
     return (
         <>
@@ -43,9 +78,10 @@ function SewingOrderForm({ properties }) {
                         </div>
                         <div>ชื่อ/บริษัท : <span className='underline underline-offset-4 font-medium'>ㅤ{properties?.["ชื่อ/บริษัท"]?.title?.[0]?.text?.content}ㅤ</span></div>
                         <div className='flex gap-2'>ชนิดงาน :
-                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "กางเกง" ? true : false} onChange={handleChangeTypeOfWork} /> กางเกง
-                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "ปัก" ? true : false} onChange={handleChangeTypeOfWork} /> ปัก
-                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "เสื้อ/แซ็ก/กระโปรง" ? true : false} onChange={handleChangeTypeOfWork} /> เสื้อ/แจ็ก/กระโปรง</div>
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "กางเกง"} readOnly /> กางเกง
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "ปัก"} readOnly /> ปัก
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "เสื้อ/แซ็ก/กระโปรง"} readOnly /> เสื้อ/แซ็ก/กระโปรง
+                        </div>
                     </div>
                     <div className="flex gap-2 text-md justify-center mb-2">
                         <div className='flex gap-2'>รหัสเช็ต : <span className='underline underline-offset-4 font-medium'> {properties?.["รหัสเซ็ต"]?.rich_text[0]?.text?.content}</span></div>
@@ -81,22 +117,19 @@ function SewingOrderForm({ properties }) {
                         <div className='flex gap-2'>ผู้เขียนบิล : <span className='underline underline-offset-4 font-medium'>{properties?.["ผู้เขียนบิล"]?.rich_text[0]?.text?.content}</span></div>
                     </div>
                 </div>
-                <div className='grid grid-cols-[40%_60%] mt-5'>
-                    <div className='border w-full flex justify-center'>
+                <div className='mt-5'>
+                    <div className='border w-full flex justify-center font-bold'>
                         <h2>รูปแบบ</h2>
                     </div>
-                    <div className='border w-full flex justify-center'>
-                        <h2>รายละเอียด</h2>
-                    </div>
                 </div>
-                <div className='mt-5'>
-                    <div className='grid grid-cols-[40%_60%]'>
-                        <div className={`w-full grid gap-2 justify-items-center ${files.length === 1 ? 'grid-cols-1' : files.length <= 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                <div>
+                    <div className='grid'>
+                        <div className={`w-full grid gap-4 justify-items-center content-center border p-4 border-t-0 ${files.length === 1 ? 'grid-cols-1' : files.length <= 2 ? 'grid-cols-2' : files.length <= 3 ? 'grid-cols-3' : files.length <= 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
                             {files.length > 0 ? (
                                 files.map((file, index) => (
                                     <img
                                         key={index}
-                                        className="w-56 h-34 object-contain"
+                                        className={`${files.length === 1 ? 'w-full h-44' : 'w-56 h-38'} object-contain`}
                                         src={file.external?.url ?? file.file?.url}
                                         alt={file.name}
                                     />
@@ -105,60 +138,66 @@ function SewingOrderForm({ properties }) {
                                 <p>ไม่มีรูปภาพ</p>
                             )}
                         </div>
-                        <div className='px-5 flex flex-col gap-5'>
-                            <div className='flex justify-center'>
-                                <div className='flex gap-2'>ประเภท
-                                    <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ล็อต" ? true : false} onChange={handleChangeType} /> ล็อต
-                                    <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ออเดอร์" ? true : false} onChange={handleChangeType} /> ออเดอร์
-                                    <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ตัวอย่าง" ? true : false} onChange={handleChangeType} /> ตัวอย่าง
-                                    <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "รายตัว" ? true : false} onChange={handleChangeType} /> รายตัว
-                                </div>
-                            </div>
-                            <div className='flex flex-col gap-2 px-5'>
-                                <div className='flex gap-4'>
-                                    <div>ชนิดผ้า <span className='underline underline-offset-4 font-medium'>ㅤ{properties?.["ชนิดผ้า"]?.rich_text[0]?.text?.content}ㅤ</span></div>
-                                    <div>ห้าง <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["ห้าง"]?.rich_text[0]?.text?.content}ㅤ</span></div>
-                                </div>
-                                <div className='flex gap-4'>
-                                    <div>ไซต์/ตัว <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["ไซส์/ตัว (2)"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
-                                    <div>สี <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["สี"]?.rich_text[0]?.text?.content}ㅤ</span></div>
-                                </div>
-                                <div className='flex gap-4'>
-                                    <div>ไซต์/ตัว <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["ไซส์/ตัว (3)"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
-                                    <div>สี <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["สี (1)"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
-                                </div>
-                                <div className='flex gap-4'>
-                                    <div>อื่นๆ <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["อื่นๆ"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div className='border w-full flex justify-center border-t-0 font-bold'>
+                    <h2>รายละเอียด</h2>
+                </div>
+                <div className='p-2 border border-y-0 text-[14.5px] grid gap-2'>
+                    <div className='flex gap-2 justify-center mt-2'>ประเภท
+                        <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ล็อต" ? true : false} readOnly /> ล็อต
+                        <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ออเดอร์" ? true : false} readOnly /> ออเดอร์
+                        <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ตัวอย่าง" ? true : false} readOnly /> ตัวอย่าง
+                        <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "รายตัว" ? true : false} readOnly /> รายตัว
+                        <div>ชนิดผ้า : <span className='underline underline-offset-4 font-medium'>ㅤㅤ{properties?.["ชนิดผ้า"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
+                        <div>ห้าง : <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["ห้าง"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
+                    </div>
+                    <div>
+                        <div className='flex gap-4 justify-center mb-4 '>
+                            <div>ซ่อม : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ซ่อม"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
+                            <div>ผ่าน : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ผ่าน"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
+                            <div>คงค้าง : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["คงค้าง"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
+                            <p className='relative'>เซ็นต์ส่งงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.external?.url || ""} alt="qwe" /></p>
+                            <p className='relative'>เซ็นต์รับงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์รับงาน"]?.files[0]?.external?.url || ""} alt="qwe" /></p>
                         </div>
                     </div>
                 </div>
-                <div className='mt-5'>
-                    <table className="w-full border-collapse border">
+                <div>
+                    <table className="border-collapse border text-center w-full text-[12px]">
                         <thead>
-                            <tr className="colorGreen text-sm">
-                                <th className="border px-4 py-2">วัน/เดือน/ปี ส่ง</th>
-                                <th className="border px-4 py-2">รายละเอียด</th>
-                                <th className="border px-4 py-2">จำนวนส่ง</th>
-                                <th className="border px-4 py-2">ซ่อม</th>
-                                <th className="border px-4 py-2">ผ่าน</th>
-                                <th className="border px-4 py-2">คงค้าง</th>
-                                <th className="border px-4 py-2">เซ็นต์ส่งงาน</th>
-                                <th className="border px-4 py-2">เซ็นต์รับงาน</th>
+                            <tr>
+                                {tableData.map((data, index) => (
+                                    <React.Fragment key={index}>
+                                        <th className="border p-2" colSpan="3">รหัสสีที่ ({index + 1})</th>
+                                    </React.Fragment>
+                                ))}
+                            </tr>
+                            <tr>
+                                {tableData.map((_, index) => (
+                                    <React.Fragment key={index}>
+                                        <th className="border p-2">รหัสสี</th>
+                                        <th className="border p-2">ไซส์</th>
+                                        <th className="border p-2">จำนวน</th>
+                                    </React.Fragment>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {[...Array(4)].map((_, index) => (
-                                <tr key={index}>
-                                    <td className="border px-4 py-2 text-center">&nbsp;</td>
-                                    <td className="border px-4 py-2">&nbsp;</td>
-                                    <td className="border px-4 py-2 text-right">&nbsp;</td>
-                                    <td className="border px-4 py-2 text-right">&nbsp;</td>
-                                    <td className="border px-4 py-2 text-right">&nbsp;</td>
-                                    <td className="border px-4 py-2 text-right">&nbsp;</td>
-                                    <td className="border px-4 py-2">&nbsp;</td>
-                                    <td className="border px-4 py-2">&nbsp;</td>
+                            {Array.from({ length: maxRows }).map((_, rowIndex) => (
+                                <tr key={rowIndex}>
+                                    {tableData.map((data, colIndex) => (
+                                        <React.Fragment key={colIndex}>
+                                            {/* แสดงรหัสสีแค่ครั้งเดียวใน row แรกของแต่ละ column */}
+                                            {rowIndex === 0 ? (
+                                                <td className="border p-2" rowSpan={maxRows}>
+                                                    {data.code}
+                                                </td>
+                                            ) : null}
+                                            {/* ถ้า rowIndex มีข้อมูลให้แสดง ถ้าไม่มีให้เว้นช่องว่าง */}
+                                            <td className="border p-2">{data.sizes[rowIndex]?.[0] ?? ""}</td>
+                                            <td className="border p-2">{data.sizes[rowIndex]?.[1] ?? ""}</td>
+                                        </React.Fragment>
+                                    ))}
                                 </tr>
                             ))}
                         </tbody>
@@ -198,6 +237,7 @@ function SewingOrderForm({ properties }) {
                     nameapproverId={properties?.["ชื่อผู้อนุมัติ(จ่ายเงิน)"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
                     altapproverId={properties?.["ผู้อนุมัติ(จ่ายเงิน)"]?.files[0]?.name}
                     dateapproverId={properties["วันที่เซ็นอนุมัติ(จ่ายเงิน)"]?.date?.start}
+                    left={"left-32"}
                 />
                 <div>
                     หมายเหตุ: <span>ทางบริษัทจะชำระเงินให้กับช่างในกรณีที่มีการส่งมอบสินค้าเรียบร้อยครบตามใบจ่ายงานช่างเย็บ</span>
