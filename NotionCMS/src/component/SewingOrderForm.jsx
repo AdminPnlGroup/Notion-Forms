@@ -157,8 +157,8 @@ function SewingOrderForm({ properties }) {
                             <div>ซ่อม : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ซ่อม"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
                             <div>ผ่าน : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ผ่าน"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
                             <div>คงค้าง : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["คงค้าง"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
-                            <p className='relative'>เซ็นต์ส่งงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.external?.url || ""} alt="qwe" /></p>
-                            <p className='relative'>เซ็นต์รับงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์รับงาน"]?.files[0]?.external?.url || ""} alt="qwe" /></p>
+                            <p className='relative'>เซ็นต์ส่งงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.external?.url || ""} alt={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.name || ""} /></p>
+                            <p className='relative'>เซ็นต์รับงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์รับงาน"]?.files[0]?.external?.url || ""} alt={properties?.["เซ็นต์รับงาน"]?.files[0]?.name || ""} /></p>
                         </div>
                     </div>
                 </div>
