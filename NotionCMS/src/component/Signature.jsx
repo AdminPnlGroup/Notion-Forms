@@ -1,12 +1,12 @@
 import React from 'react'
 
-function Signature({ requesterTitle, requesterId, namerequesterId, altrequesterId, daterequesterId, approverTitle, approverId, nameapproverId, altapproverId, dateapproverId, left }) {
+function Signature({ requesterTitle, requesterId, namerequesterId, altrequesterId, daterequesterId, approverTitle, approverId, nameapproverId, altapproverId, dateapproverId, left, width, top }) {
 
 
     return (
         <div className='flex justify-between px-5'>
             <div className='text-center grid gap-2'>
-                <p className='relative'>{requesterTitle} : ............................................<img className={`absolute -top-12 h-24 ${left}`} src={requesterId} alt={altrequesterId} /></p>
+                <p className='relative'>{requesterTitle} : ............................................<img className={`absolute ${top} ${left} ${width}`} src={requesterId} alt={altrequesterId} /></p>
                 <p>( {namerequesterId} )</p>
                 <p>วันที่ :
                     <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">
@@ -23,7 +23,7 @@ function Signature({ requesterTitle, requesterId, namerequesterId, altrequesterI
                 </p>
             </div>
             <div className='text-center grid gap-2'>
-                <p className='relative'>{approverTitle} : ............................................<img className={`absolute -top-12 h-24 ${left}`} src={approverId} alt={altapproverId} /></p>
+                <p className='relative'>{approverTitle} : ............................................<img className={`absolute -top-12 h-22 ${left}`} src={approverId} alt={altapproverId} /></p>
                 <p>( {nameapproverId} )</p>
                 <p>วันที่ :
                     <span className="font-medium underline decoration-dotted underline-offset-4 decoration-1.5">

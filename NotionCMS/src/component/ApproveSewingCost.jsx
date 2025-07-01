@@ -9,8 +9,7 @@ function ApproveSewingCost({ properties }) {
         unitPrice: "",
         productionQuantity: "",
         passedQuantity: "",
-        technicianName: "",
-        comment: ""
+        technicianName: ""
     });
 
     const [data, setData] = useState([]);
@@ -25,8 +24,7 @@ function ApproveSewingCost({ properties }) {
             unitPrice: properties?.["ราคาจ้างต่อตัว"]?.rich_text?.[0]?.text?.content || "",
             productionQuantity: properties?.["จำนวนผลิต"]?.rich_text?.[0]?.text?.content || "",
             passedQuantity: properties?.["จำนวนตัวที่ ตรวจผ่าน"]?.rich_text?.[0]?.text?.content || "",
-            technicianName: properties?.["ชื่อช่าง"]?.rich_text?.[0]?.text?.content || "",
-            comment: properties?.["หมายเหตุ"]?.rich_text?.[0]?.text?.content || ""
+            technicianName: properties?.["ชื่อช่าง"]?.rich_text?.[0]?.text?.content || ""
         });
     }, [properties]);
 
@@ -65,7 +63,6 @@ function ApproveSewingCost({ properties }) {
             productionQuantity: results.productionQuantity[i] || "ไม่มีข้อมูล",
             passedQuantity: results.passedQuantity[i] || "ไม่มีข้อมูล",
             technicianName: results.technicianName[i] || "ไม่มีข้อมูล",
-            comment: results.comment[i] || "ไม่มีข้อมูล"
         })));
 
     }, [contents]);
@@ -79,7 +76,17 @@ function ApproveSewingCost({ properties }) {
                     </div>
                 </div>
                 <div className='mt-10 flex justify-end mr-2'>
-                    <p className='relative'>วันที่ : ....<span className='absolute -top-1'>{properties?.["วันที่"]?.date?.start}</span>............................</p>
+                    <p>วันที่:
+                        <span className='font-medium underline decoration-dotted underline-offset-4 decoration-1.5'>ㅤ
+                            {new Intl.DateTimeFormat('th-TH',
+                                {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                }
+                            ).format(new Date(properties?.["วันที่"]?.date?.start))}ㅤ
+                        </span>
+                    </p>
                 </div>
                 <div>
                     <table className="min-w-full border-collapse border mt-10">
@@ -92,7 +99,6 @@ function ApproveSewingCost({ properties }) {
                                 <th className="border p-2">จำนวน<br />ผลิต</th>
                                 <th className="border p-2">จำนวนตัวที่<br />ตรวจผ่าน</th>
                                 <th className="border p-2">ชื่อช่าง</th>
-                                <th className="border p-2">หมายเหตุ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,28 +113,32 @@ function ApproveSewingCost({ properties }) {
                                         <td className="border px-4 p-2 text-center">{item?.productionQuantity || ""}</td>
                                         <td className="border px-4 p-2 text-center">{item?.passedQuantity || ""}</td>
                                         <td className="border px-4 p-2">{item?.technicianName || ""}</td>
-                                        <td className="border px-4 p-2">{item?.comment || ""}</td>
                                     </tr>
                                 );
                             })}
                         </tbody>
                     </table>
+                    <div className='mt-10'>หมายเหตุ: ㅤ
+                        <span>{properties?.["หมายเหตุ"]?.rich_text[0]?.text?.content}</span>
+                    </div>
                 </div>
                 {errorMessage && <span className="text-red-500 text-md mt-10 block">{errorMessage}</span>}
             </div>
             <div className='mb-20'>
                 <Signature
                     requesterTitle="ผู้ทบทวน"
-                    requesterId={properties?.["ลายเซ็นผู้ทบทวน"]?.files[0]?.external?.url || ""}
+                    requesterId={properties?.["ลายเซ็นผู้ทบทวน"]?.files[0]?.external?.url || properties?.["ลายเซ็นผู้ทบทวน"]?.files[0]?.file?.url || ""}
                     namerequesterId={properties?.["ชื่อผู้ทบทวน"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
                     altrequesterId={properties?.["ลายเซ็นผู้ทบทวน"]?.files[0]?.name}
                     daterequesterId={properties?.["วันที่เซ็นชื่อผู้ทบทวน"]?.date?.start}
                     approverTitle="ผู้อนุมัติ"
-                    approverId={properties?.["ลายเซ็นผู้อนุมัติ"]?.files[0]?.external?.url || ""}
+                    approverId={properties?.["ลายเซ็นผู้อนุมัติ"]?.files[0]?.external?.url || properties?.["ลายเซ็นผู้อนุมัติ"]?.files[0]?.file?.url || ""}
                     nameapproverId={properties?.["ชื่อผู้อนุมัติ"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
                     altapproverId={properties?.["ลายเซ็นผู้อนุมัติ"]?.files[0]?.name}
                     dateapproverId={properties?.["วันที่เซ็นชื่อผู้อนุมัติ"]?.date?.start}
                     left={"left-18"}
+                    width={"w-40"}
+                    top={`-top-20`}
                 />
             </div>
         </>

@@ -6,6 +6,7 @@ function SewingOrderForm({ properties }) {
     const [isCheckedTypeOfWork, setIsCheckedTypeOfWork] = useState("");
     const [isCheckedType, setIsCheckedType] = useState("");
     const [files, setFiles] = useState([]);
+    const [fabric, setFabric] = useState([]);
     const [tableInputs, setTableInputs] = useState([]);
     const [tableData, setTableData] = useState([]);
 
@@ -35,6 +36,11 @@ function SewingOrderForm({ properties }) {
         if (properties?.["รูปแบบ(ตุ๊กตา)"]?.files) {
             setFiles(properties["รูปแบบ(ตุ๊กตา)"].files);
         }
+
+        if (properties?.["ลายผ้า"]?.files) {
+            setFabric(properties["ลายผ้า"].files);
+        }
+
     }, [properties]);
 
     // คำนวณ tableData เมื่อ tableInputs เปลี่ยน
@@ -80,7 +86,9 @@ function SewingOrderForm({ properties }) {
                         <div className='flex gap-2'>ชนิดงาน :
                             <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "กางเกง"} readOnly /> กางเกง
                             <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "ปัก"} readOnly /> ปัก
-                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "เสื้อ/แซ็ก/กระโปรง"} readOnly /> เสื้อ/แซ็ก/กระโปรง
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "เสื้อ"} readOnly /> เสื้อ
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "แซ็ก"} readOnly /> แซ็ก
+                            <input className='w-4 h-4 border' type="checkbox" checked={isCheckedTypeOfWork === "กระโปรง"} readOnly /> กระโปรง
                         </div>
                     </div>
                     <div className="flex gap-2 text-md justify-center mb-2">
@@ -117,19 +125,36 @@ function SewingOrderForm({ properties }) {
                         <div className='flex gap-2'>ผู้เขียนบิล : <span className='underline underline-offset-4 font-medium'>{properties?.["ผู้เขียนบิล"]?.rich_text[0]?.text?.content}</span></div>
                     </div>
                 </div>
-                <div className='mt-5'>
-                    <div className='border w-full flex justify-center font-bold'>
+                <div className={`mt-5 grid ${fabric.length <= 2 ? 'grid-cols-[50%_50%]' : fabric.length <= 4 ? 'grid-cols-[40%_60%]' : 'grid-cols-[30%_70%]'}`}>
+                    <div className='border border-r-0 font-bold text-center'>
                         <h2>รูปแบบ</h2>
+                    </div>
+                    <div className='border font-bold text-center'>
+                        <h2>ลายผ้า</h2>
                     </div>
                 </div>
                 <div>
-                    <div className='grid'>
-                        <div className={`w-full grid gap-4 justify-items-center content-center border p-4 border-t-0 ${files.length === 1 ? 'grid-cols-1' : files.length <= 2 ? 'grid-cols-2' : files.length <= 3 ? 'grid-cols-3' : files.length <= 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
+                    <div className={`grid ${fabric.length <= 2 ? 'grid-cols-[50%_50%]' : fabric.length <= 4 ? 'grid-cols-[40%_60%]' : 'grid-cols-[30%_70%]'}`}>
+                        <div className={`w-full grid gap-4 justify-items-center content-center border p-4 border-t-0 border-r-0 ${files.length === 1 ? 'grid-cols-1' : "grid-cols-2"}`}>
                             {files.length > 0 ? (
                                 files.map((file, index) => (
                                     <img
                                         key={index}
-                                        className={`${files.length === 1 ? 'w-full h-44' : 'w-56 h-38'} object-contain`}
+                                        className={`${files.length === 1 ? 'w-full h-44' : 'w-48 h-38'} object-contain`}
+                                        src={file.external?.url ?? file.file?.url}
+                                        alt={file.name}
+                                    />
+                                ))
+                            ) : (
+                                <p>ไม่มีรูปภาพ</p>
+                            )}
+                        </div>
+                        <div className={`w-full h-full border border-t-0 text-center grid content-center p-2 gap-2 ${fabric.length === 1 ? 'grid-cols-1' : fabric.length <= 2 ? 'grid-cols-2' : fabric.length <= 3 ? 'grid-cols-3' : fabric.length <= 4 ? 'grid-cols-4' : fabric.length <= 5 ? 'grid-cols-5' : 'grid-cols-6'}`}>
+                            {fabric.length > 0 ? (
+                                fabric.map((file, index) => (
+                                    <img
+                                        key={index}
+                                        className={`${fabric.length === 1 ? 'w-full h-44' : 'w-48 h-38'} object-contain`}
                                         src={file.external?.url ?? file.file?.url}
                                         alt={file.name}
                                     />
@@ -143,7 +168,7 @@ function SewingOrderForm({ properties }) {
                 <div className='border w-full flex justify-center border-t-0 font-bold'>
                     <h2>รายละเอียด</h2>
                 </div>
-                <div className='p-2 border border-y-0 text-[14.5px] grid gap-2'>
+                <div className='p-2 border border-y-0 text-[14.5px] grid gap-4'>
                     <div className='flex gap-2 justify-center mt-2'>ประเภท
                         <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ล็อต" ? true : false} readOnly /> ล็อต
                         <input className='w-4 h-4 border' type="checkbox" checked={isCheckedType === "ออเดอร์" ? true : false} readOnly /> ออเดอร์
@@ -153,12 +178,12 @@ function SewingOrderForm({ properties }) {
                         <div>ห้าง : <span className='underline font-medium underline-offset-4'>ㅤㅤ{properties?.["ห้าง"]?.rich_text[0]?.text?.content}ㅤㅤ</span></div>
                     </div>
                     <div>
-                        <div className='flex gap-4 justify-center mb-4 '>
-                            <div>ซ่อม : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ซ่อม"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
-                            <div>ผ่าน : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["ผ่าน"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
-                            <div>คงค้าง : <span className="inline-flex justify-center items-center w-[4ch] border-b border-black font-medium text-center">{properties?.["คงค้าง"]?.rich_text[0]?.text?.content || "\u00A0"}</span> ตัว</div>
-                            <p className='relative'>เซ็นต์ส่งงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.external?.url || ""} alt={properties?.["เซ็นต์ส่งงาน"]?.files[0]?.name || ""} /></p>
-                            <p className='relative'>เซ็นต์รับงาน : <span className='border-b border-black'>ㅤㅤㅤㅤㅤ</span><img className='absolute -top-2 left-20 h-14' src={properties?.["เซ็นต์รับงาน"]?.files[0]?.external?.url || ""} alt={properties?.["เซ็นต์รับงาน"]?.files[0]?.name || ""} /></p>
+                        <div className='flex gap-2 justify-center mb-4 '>
+                            <div>ซ่อม : <span className="justify-center items-center w-[3ch] underline font-medium text-center">{"\u00A0"}{properties?.["ซ่อม"]?.rich_text[0]?.text?.content || "\u00A0"}{"\u00A0"}</span> ตัว</div>
+                            <div>ผ่าน : <span className="justify-center items-center w-[3ch] underline font-medium text-center">{"\u00A0"}{properties?.["ผ่าน"]?.rich_text[0]?.text?.content || "\u00A0"}{"\u00A0"}</span> ตัว</div>
+                            <div>คงค้าง : <span className="justify-center items-center w-[3ch] underline font-medium text-center">{"\u00A0"}{properties?.["คงค้าง"]?.rich_text[0]?.text?.content || "\u00A0"}{"\u00A0"}</span> ตัว</div>
+                            <div>เซ็นต์ส่งงาน : <span className=" justify-center items-center w-[12ch] underline font-medium">{"\u00A0"}{properties?.["ชื่อช่าง"]?.rich_text[0]?.text?.content || "\u00A0"}{"\u00A0"}</span></div>
+                            <p className='relative'>เซ็นต์รับงาน : <span className='underline'>ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ</span><img className='absolute -top-3 left-20 w-36' src={properties?.["เซ็นต์รับงาน"]?.files[0]?.external?.url || properties?.["เซ็นต์รับงาน"]?.files[0]?.file?.url || ""} alt={properties?.["เซ็นต์รับงาน"]?.files[0]?.name || ""} /></p>
                         </div>
                     </div>
                 </div>
@@ -204,40 +229,45 @@ function SewingOrderForm({ properties }) {
                     </table>
                 </div>
                 <div className='justify-center mt-5'>
-                    <div>รายละเอียดราคา : <span className='underline font-medium underline-offset-4'>ㅤㅤㅤ{properties?.["รายละเอียดราคา"]?.rich_text[0]?.text?.content}ㅤㅤㅤ</span></div>
+                    <div>รายละเอียดราคา : <span className="underline font-medium">ㅤ{properties?.["รายละเอียดราคา"]?.rich_text[0]?.text?.content || "\u00A0"}ㅤ</span></div>
                     <div className="mt-2 flex gap-2">
-                        <div>การชำระเงิน: ราคา/ตัว <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["การชำระเงิน(ราคา/ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
-                        <div>ตัว รวมจำนวน <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["รวมจำนวน(ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
-                        <div>ตัว ยอดเงินรวม <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["ยอดเงินรวม"]?.rich_text[0]?.text?.content}ㅤ</span></div>
+                        <div>การชำระเงิน : ราคา/ตัว <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["การชำระเงิน(ราคา/ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
+                        <div>ตัว รวมจำนวน : <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["รวมจำนวน(ตัว)"]?.rich_text[0]?.text?.content}ㅤ</span> </div>
+                        <div>ตัว ยอดเงินรวม : <span className='underline font-medium underline-offset-4'>ㅤ{properties?.["ยอดเงินรวม"]?.rich_text[0]?.text?.content}ㅤ</span></div>
                     </div>
                     <div className="mt-2 flex gap-2">
-                        <div>วันที่วางบิล:
-                            <span className='underline font-medium underline-offset-4'>ㅤ
-                                {new Intl.DateTimeFormat('th-TH',
-                                    {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric'
-                                    }
-                                ).format(new Date(properties?.["วันที่วางบิล"]?.date?.start))}ㅤ
+                        <div>
+                            วันที่วางบิล :
+                            <span className="underline font-medium underline-offset-4">
+                                ㅤ
+                                {properties?.["วันที่วางบิล"]?.date?.start
+                                    ? new Intl.DateTimeFormat("th-TH", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    }).format(new Date(properties["วันที่วางบิล"].date.start))
+                                    : "ไม่ระบุ"}ㅤ
                             </span>
                         </div>
+                        <div>หมายเหตุ : <span className="underline underline-offset-4 font-medium">ㅤ{properties?.["หมายเหตุ"]?.rich_text[0]?.text?.content || "\u00A0"}ㅤ</span></div>
                     </div>
                 </div>
             </div>
             <div className="text-center flex flex-col gap-5 mb-6">
                 <Signature
                     requesterTitle="ผู้อนุมัติ(จ่ายงาน)"
-                    requesterId={properties?.["ผู้อนุมัติ(จ่ายงาน)"]?.files?.[0]?.external?.url || ""}
+                    requesterId={properties?.["ผู้อนุมัติ(จ่ายงาน)"]?.files?.[0]?.external?.url || properties?.["ผู้อนุมัติ(จ่ายงาน)"]?.files[0]?.file?.url || ""}
                     namerequesterId={properties?.["ชื่อผู้อนุมัติ(จ่ายงาน)"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
                     altrequesterId={properties?.["ผู้อนุมัติ(จ่ายงาน)"]?.files[0]?.name}
                     daterequesterId={properties?.["วันที่เซ็นอนุมัติ(จ่ายงาน)"]?.date?.start}
                     approverTitle="ผู้อนุมัติ(จ่ายเงิน)"
-                    approverId={properties?.["ผู้อนุมัติ(จ่ายเงิน)"]?.files[0]?.external?.url || ""}
+                    approverId={properties?.["ผู้อนุมัติ(จ่ายเงิน)"]?.files[0]?.external?.url || properties?.["ผู้อนุมัติ(จ่ายเงิน)"]?.files[0]?.file?.url || ""}
                     nameapproverId={properties?.["ชื่อผู้อนุมัติ(จ่ายเงิน)"]?.rich_text?.[0]?.text?.content || "\u00A0".repeat(40)}
                     altapproverId={properties?.["ผู้อนุมัติ(จ่ายเงิน)"]?.files[0]?.name}
                     dateapproverId={properties["วันที่เซ็นอนุมัติ(จ่ายเงิน)"]?.date?.start}
                     left={"left-32"}
+                    width={"w-40"}
+                    top={`-top-4`}
                 />
                 <div>
                     หมายเหตุ: <span>ทางบริษัทจะชำระเงินให้กับช่างในกรณีที่มีการส่งมอบสินค้าเรียบร้อยครบตามใบจ่ายงานช่างเย็บ</span>
